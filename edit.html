@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการสินค้า - ร้านแม่ดอนโอทอป</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <header class="text-center py-6">
+        <h1 class="text-3xl font-bold text-gray-800">จัดการสินค้า</h1>
+        <p class="mt-2 text-gray-600"><a href="index.html" class="text-blue-500 hover:underline">กลับไปหน้าหลัก</a></p>
+    </header>
+
+    <main class="container mx-auto bg-white p-6 rounded-lg shadow-md max-w-2xl">
+        <form id="product-form" class="space-y-4">
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700">หมวดหมู่</label>
+                <select id="category" name="category" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                    <option value="กลุ่มกล้วยแปรรูป">กลุ่มกล้วยแปรรูป</option>
+                    <option value="กลุ่มมันฝรั่ง / เผือก / ฟักทอง">กลุ่มมันฝรั่ง / เผือก / ฟักทอง</option>
+                    <option value="กลุ่มขนมอบ & ขนมไทยแปรรูป">กลุ่มขนมอบ & ขนมไทยแปรรูป</option>
+                </select>
+            </div>
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">ชื่อสินค้า</label>
+                <input type="text" id="name" name="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+            </div>
+            <div>
+                <label for="price_kg" class="block text-sm font-medium text-gray-700">ราคาต่อกิโล</label>
+                <input type="text" id="price_kg" name="price_kg" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+            </div>
+            <div>
+                <label for="price_box" class="block text-sm font-medium text-gray-700">ราคาต่อกล่อง</label>
+                <input type="text" id="price_box" name="price_box" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+            </div>
+            <div>
+                <label for="image" class="block text-sm font-medium text-gray-700">รูปภาพ (URL หรือ File)</label>
+                <input type="text" id="image-url" name="image" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 mb-2" placeholder="ใส่ URL รูปภาพ...">
+                <p class="text-center text-gray-500">หรือ</p>
+                <input type="file" id="image-file" class="mt-1 block w-full">
+            </div>
+            <div id="image-preview" class="hidden">
+                <p class="text-sm font-medium text-gray-700 mt-2">ตัวอย่างรูปภาพ:</p>
+                <img id="preview-img" src="" alt="Image Preview" class="mt-2 w-48 h-48 object-cover rounded">
+            </div>
+            <input type="hidden" id="product-index">
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">เพิ่มสินค้าใหม่</button>
+        </form>
+
+        <hr class="my-8">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">สินค้าทั้งหมด</h2>
+        <div id="product-list" class="space-y-4">
+            </div>
+    </main>
+    
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('product-form');
+            const productListContainer = document.getElementById('product-list');
+            const imageFile = document.getElementById('image-file');
+            const imageUrl = document.getElementById('image-url');
+            const imagePreview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            let products = getProducts();
+            
+            // Function to render the product list
+            const renderProducts = () => {
+                productListContainer.innerHTML = '';
+                products.forEach((product, index) => {
+                    const productItem = document.createElement('div');
+                    productItem.classList.add('flex', 'items-center', 'justify-between', 'border', 'border-gray-200', 'p-4', 'rounded-md', 'bg-gray-50');
+                    productItem.innerHTML = `
+                        <div class="flex-grow">
+                            <p class="font-semibold">${product.name} <span class="text-sm text-gray-500">(${product.category})</span></p>
+                            <p class="text-sm text-gray-600">${product.price_kg} | ${product.price_box}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="edit-btn bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 text-sm" data-index="${index}">แก้ไข</button>
+                            <button class="delete-btn bg-red-500 text-white p-2 rounded-md hover:bg-red-600 text-sm" data-index="${index}">ลบ</button>
+                        </div>
+                    `;
+                    productListContainer.appendChild(productItem);
+                });
+            };
+
+            // Event listener for form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const index = document.getElementById('product-index').value;
+                const newProduct = {
+                    category: document.getElementById('category').value,
+                    name: document.getElementById('name').value,
+                    price_kg: document.getElementById('price_kg').value,
+                    price_box: document.getElementById('price_box').value,
+                    image: previewImg.src
+                };
+
+                if (index === '') {
+                    // Add new product
+                    products.push(newProduct);
+                } else {
+                    // Edit existing product
+                    products[index] = newProduct;
+                }
+
+                saveProducts(products);
+                renderProducts();
+                form.reset();
+                document.getElementById('product-index').value = '';
+                submitBtn.textContent = 'เพิ่มสินค้าใหม่';
+                imagePreview.classList.add('hidden');
+                imageFile.value = '';
+            });
+
+            // Event listener for edit and delete buttons
+            productListContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-btn')) {
+                    const index = e.target.dataset.index;
+                    products.splice(index, 1);
+                    saveProducts(products);
+                    renderProducts();
+                }
+
+                if (e.target.classList.contains('edit-btn')) {
+                    const index = e.target.dataset.index;
+                    const productToEdit = products[index];
+                    
+                    document.getElementById('category').value = productToEdit.category;
+                    document.getElementById('name').value = productToEdit.name;
+                    document.getElementById('price_kg').value = productToEdit.price_kg;
+                    document.getElementById('price_box').value = productToEdit.price_box;
+                    document.getElementById('image-url').value = productToEdit.image;
+                    document.getElementById('product-index').value = index;
+                    
+                    previewImg.src = productToEdit.image;
+                    imagePreview.classList.remove('hidden');
+
+                    submitBtn.textContent = 'บันทึกการแก้ไข';
+                }
+            });
+
+            // Event listeners for image preview
+            imageUrl.addEventListener('input', () => {
+                if (imageUrl.value) {
+                    previewImg.src = imageUrl.value;
+                    imagePreview.classList.remove('hidden');
+                    imageFile.value = ''; // Clear file input
+                } else {
+                    imagePreview.classList.add('hidden');
+                }
+            });
+
+            imageFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        previewImg.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                        imageUrl.value = ''; // Clear URL input
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.classList.add('hidden');
+                }
+            });
+
+            // Initial render
+            renderProducts();
+        });
+    </script>
+</body>
+</html>

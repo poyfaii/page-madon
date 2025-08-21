@@ -76,18 +76,15 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-200 py-8 shadow-sm text-center">
     <h1 class="text-4xl font-bold text-amber-800 fade-in">ของฝากสุโขทัย แม่ดอนโอทอป</h1>
     <p class="mt-2 text-lg text-amber-700 fade-in">รวมของดี ของเด็ด OTOP จากแม่ดอน</p>
   </header>
 
-  <!-- สินค้า -->
   <main class="container mx-auto p-6">
     <div id="product-list"></div>
   </main>
 
-  <!-- Footer -->
   <footer class="bg-amber-900 text-white mt-16">
     <div class="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
       <div>
@@ -136,12 +133,6 @@
 
           card.innerHTML = `
             <img src="${product.image}" alt="${product.name}" class="w-full h-52 object-cover" />
-            <div class="p-4">
-              <h3 class="text-lg font-bold text-amber-900 mb-1">${product.name}</h3>
-              <p class="text-gray-700 text-sm"><strong>กิโล:</strong> ${product.price_kg}</p>
-              <p class="text-gray-700 text-sm"><strong>กล่อง:</strong> ${product.price_box}</p>
-            </div>
-            <span class="btn-detail">ดูรายละเอียด</span>
           `;
           grid.appendChild(card);
         });

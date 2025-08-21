@@ -29,6 +29,7 @@
       transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
+      padding: 1rem; /* เพิ่มระยะห่างภายในกรอบ */
     }
 
     .card:hover {
@@ -132,7 +133,7 @@
           card.className = 'card fade-in';
 
           card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="w-full h-52 object-cover" />
+            <img src="${product.image}" alt="${product.name}" class="w-full h-52 object-cover rounded-lg" />
           `;
           grid.appendChild(card);
         });

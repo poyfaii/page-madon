@@ -30,9 +30,8 @@
       cursor: pointer;
       position: relative;
       /* --- การเปลี่ยนแปลงในส่วนนี้ --- */
-      display: flex;
-      flex-direction: column;
       min-height: 360px; /* กำหนดความสูงของการ์ด */
+      padding: 1rem;      /* เพิ่มกรอบรอบรูป */
     }
 
     .card:hover {
@@ -137,11 +136,7 @@
 
           // --- การเปลี่ยนแปลงในส่วนนี้ ---
           card.innerHTML = `
-            <div class="p-4">
-              <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover rounded-lg" />
-            </div>
-            <div class="p-4 pt-0 flex-grow">
-              </div>
+            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover rounded-lg" />
           `;
           grid.appendChild(card);
         });

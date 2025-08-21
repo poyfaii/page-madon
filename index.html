@@ -29,7 +29,10 @@
       transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
-      padding: 1rem; /* เพิ่มระยะห่างภายในกรอบ */
+      /* --- การเปลี่ยนแปลงในส่วนนี้ --- */
+      display: flex;
+      flex-direction: column;
+      min-height: 360px; /* กำหนดความสูงของการ์ด */
     }
 
     .card:hover {
@@ -132,8 +135,13 @@
           const card = document.createElement('div');
           card.className = 'card fade-in';
 
+          // --- การเปลี่ยนแปลงในส่วนนี้ ---
           card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="w-full h-52 object-cover rounded-lg" />
+            <div class="p-4">
+              <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover rounded-lg" />
+            </div>
+            <div class="p-4 pt-0 flex-grow">
+              </div>
           `;
           grid.appendChild(card);
         });
